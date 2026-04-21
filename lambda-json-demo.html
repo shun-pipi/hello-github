@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lambda JSON レスポンス デモ</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1f35 0%, #2d3561 100%);
+      padding: 24px 32px;
+      border-bottom: 1px solid #2d3748;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    header p {
+      margin-top: 6px;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .lambda-logo {
+      display: inline-block;
+      background: #ff9900;
+      color: #000;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .scenario-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid #2d3748;
+      background: #1a202c;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover { background: #2d3748; color: #e2e8f0; }
+
+    .tab-btn.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .demo-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: #1a202c;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 12px 16px;
+      background: #2d3748;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #f56565; }
+    .dot-yellow { background: #ed8936; }
+    .dot-green { background: #48bb78; }
+
+    .code-block {
+      padding: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .kw { color: #c792ea; }
+    .fn { color: #82aaff; }
+    .str { color: #c3e88d; }
+    .num { color: #f78c6c; }
+    .cm { color: #546e7a; font-style: italic; }
+    .key { color: #ffcb6b; }
+    .hi { background: rgba(255, 200, 0, 0.15); border-radius: 3px; padding: 1px 2px; }
+
+    .invoke-btn {
+      display: block;
+      width: calc(100% - 32px);
+      margin: 0 16px 16px;
+      padding: 12px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .invoke-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+    .invoke-btn:active { transform: translateY(0); }
+
+    .response-area {
+      padding: 16px;
+    }
+
+    .response-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .response-value {
+      background: #0f1117;
+      border: 1px solid #2d3748;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      min-height: 36px;
+      word-break: break-all;
+    }
+
+    .response-value.empty { color: #4a5568; font-style: italic; }
+
+    .status-200 { color: #48bb78; font-weight: 700; }
+    .status-error { color: #f56565; font-weight: 700; }
+
+    .parse-result {
+      margin-top: 12px;
+    }
+
+    .parse-success {
+      border-left: 3px solid #48bb78;
+      padding: 8px 12px;
+      background: rgba(72, 187, 120, 0.08);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.82rem;
+      margin-top: 8px;
+    }
+
+    .parse-error {
+      border-left: 3px solid #f56565;
+      padding: 8px 12px;
+      background: rgba(245, 101, 101, 0.08);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.82rem;
+      margin-top: 8px;
+    }
+
+    .parse-warn {
+      border-left: 3px solid #ed8936;
+      padding: 8px 12px;
+      background: rgba(237, 137, 54, 0.08);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.82rem;
+      margin-top: 8px;
+    }
+
+    .tag { font-size: 0.7rem; padding: 1px 6px; border-radius: 10px; font-weight: 600; }
+    .tag-ok { background: rgba(72,187,120,0.2); color: #48bb78; }
+    .tag-warn { background: rgba(237,137,54,0.2); color: #ed8936; }
+    .tag-err { background: rgba(245,101,101,0.2); color: #f56565; }
+
+    .explanation {
+      grid-column: 1 / -1;
+      background: #1a202c;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .explanation h3 {
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .explanation ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .explanation li {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .explanation li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #3b82f6;
+    }
+
+    .explanation li code {
+      background: #0f1117;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: #c3e88d;
+    }
+
+    .scenario-desc {
+      background: #2d3748;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .scenario-desc strong { color: #e2e8f0; }
+
+    .arrow-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 16px 0;
+      flex-wrap: wrap;
+    }
+
+    .flow-box {
+      background: #2d3748;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      text-align: center;
+      color: #e2e8f0;
+    }
+
+    .flow-arrow { color: #3b82f6; font-size: 1.2rem; }
+
+    .type-badge {
+      display: inline-block;
+      background: #1a202c;
+      border: 1px solid #2d3748;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #f78c6c;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><span class="lambda-logo">λ</span> AWS Lambda JSON レスポンス デモ</h1>
+  <p>API Gateway プロキシ統合における <code>json.dumps</code> の役割をインタラクティブに体験</p>
+</header>
+
+<main>
+  <div class="arrow-flow">
+    <div class="flow-box">クライアント<br>(ブラウザ)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">API Gateway<br>(プロキシ統合)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#ff9900;color:#000;font-weight:700">Lambda<br>関数</div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-box">API Gateway<br>(レスポンス変換)</div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-box">クライアント<br>(受信)</div>
+  </div>
+
+  <div class="scenario-tabs">
+    <button class="tab-btn active" onclick="setScenario(0)">① plain string</button>
+    <button class="tab-btn" onclick="setScenario(1)">② json.dumps(文字列)</button>
+    <button class="tab-btn" onclick="setScenario(2)">③ json.dumps(辞書) ★推奨</button>
+  </div>
+
+  <div id="scenario-desc" class="scenario-desc"></div>
+
+  <div class="demo-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        Lambda 関数コード (Python)
+      </div>
+      <div id="code-display" class="code-block"></div>
+      <button class="invoke-btn" onclick="invokeLambda()">▶ Lambda を実行する</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        レスポンス & クライアント処理
+      </div>
+      <div class="response-area" id="response-area">
+        <div class="response-label">API Gateway レスポンス</div>
+        <div class="response-value empty" id="resp-full">← Lambda を実行してください</div>
+
+        <div style="margin-top:14px">
+          <div class="response-label">statusCode</div>
+          <div class="response-value" id="resp-status"></div>
+        </div>
+
+        <div style="margin-top:14px">
+          <div class="response-label">body <span id="body-type" class="type-badge"></span></div>
+          <div class="response-value" id="resp-body"></div>
+        </div>
+
+        <div class="parse-result" id="parse-result"></div>
+      </div>
+    </div>
+
+    <div class="explanation">
+      <h3>💡 このシナリオのポイント</h3>
+      <ul id="explanation-list"></ul>
+    </div>
+  </div>
+</main>
+
+<script>
+  const scenarios = [
+    {
+      title: '① body に普通の文字列を直接入れるケース',
+      desc: '<strong>body: \'Hello from Lambda!\'</strong> — 単純な文字列をそのまま body に渡します。動作はしますが、将来的に辞書データを返したくなったときに壊れます。',
+      code: `<span class="kw">import</span> json\n\n<span class="kw">def</span> <span class="fn">lambda_handler</span>(event, context):\n    <span class="kw">return</span> {\n        <span class="key">'statusCode'</span>: <span class="num">200</span>,\n        <span class="key">'body'</span>: <span class="str">'Hello from Lambda!'</span>\n        <span class="cm"># ← 文字列をそのまま入れている</span>\n    }`,
+      invoke() {
+        return {
+          statusCode: 200,
+          body: 'Hello from Lambda!'
+        };
+      },
+      parseDemo(body) {
+        try {
+          const parsed = JSON.parse(body);
+          return { type: 'warn', msg: `JSON.parse() 成功: ${JSON.stringify(parsed)}\n（たまたま文字列として解釈できた）` };
+        } catch (e) {
+          return { type: 'error', msg: `JSON.parse() エラー: ${e.message}` };
+        }
+      },
+      points: [
+        'body は文字列なので API Gateway は受け付ける',
+        'しかし <code>JSON.parse(\'Hello from Lambda!\')</code> はエラーになる（正しい JSON ではないため）',
+        'クライアントが JSON を期待している場合は失敗する',
+        '単純な文字列を返すだけなら動くが、拡張性がない'
+      ]
+    },
+    {
+      title: '② json.dumps(文字列) — テンプレートのお作法',
+      desc: '<strong>body: json.dumps(\'Hello from Lambda!\')</strong> — <code>json.dumps</code> が文字列に対して働くと、ダブルクォートが付加された JSON 文字列になります。実質的な意味は薄いですが、テンプレートとして書かれることがあります。',
+      code: `<span class="kw">import</span> json\n\n<span class="kw">def</span> <span class="fn">lambda_handler</span>(event, context):\n    <span class="kw">return</span> {\n        <span class="key">'statusCode'</span>: <span class="num">200</span>,\n        <span class="key">'body'</span>: <span class="hi">json.dumps(<span class="str">'Hello from Lambda!'</span>)</span>\n        <span class="cm"># ↑ 結果: '"Hello from Lambda!"'（" が追加される）</span>\n    }`,
+      invoke() {
+        return {
+          statusCode: 200,
+          body: JSON.stringify('Hello from Lambda!')
+        };
+      },
+      parseDemo(body) {
+        try {
+          const parsed = JSON.parse(body);
+          return { type: 'warn', msg: `JSON.parse() 成功 → "${parsed}"\n（文字列として解釈される。辞書ではない）` };
+        } catch (e) {
+          return { type: 'error', msg: `JSON.parse() エラー: ${e.message}` };
+        }
+      },
+      points: [
+        '<code>json.dumps(\'Hello\')</code> の結果は <code>\'"Hello"\'</code>（ダブルクォート付き文字列）',
+        'body は文字列なので API Gateway 的には正しい形式',
+        '<code>JSON.parse()</code> は成功するが、中身は文字列であり辞書ではない',
+        '「将来ここを辞書に変える前提で <code>json.dumps</code> で包んでおく」というテンプレート的書き方'
+      ]
+    },
+    {
+      title: '③ json.dumps(辞書) — 本来の推奨される使い方',
+      desc: '<strong>body: json.dumps({\'message\': ..., \'user\': ...})</strong> — 辞書を JSON 文字列に変換して body に渡します。クライアント側で <code>JSON.parse()</code> すると元の辞書データが取れます。これが実際のユースケースです。',
+      code: `<span class="kw">import</span> json\n\n<span class="kw">def</span> <span class="fn">lambda_handler</span>(event, context):\n    <span class="kw">return</span> {\n        <span class="key">'statusCode'</span>: <span class="num">200</span>,\n        <span class="key">'body'</span>: <span class="hi">json.dumps({\n            <span class="key">'message'</span>: <span class="str">'Hello from Lambda!'</span>,\n            <span class="key">'user'</span>: <span class="str">'Shun'</span>\n        })</span>\n        <span class="cm"># ↑ 辞書 → JSON文字列 に変換</span>\n    }`,
+      invoke() {
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: 'Hello from Lambda!', user: 'Shun' })
+        };
+      },
+      parseDemo(body) {
+        try {
+          const parsed = JSON.parse(body);
+          return {
+            type: 'ok',
+            msg: `JSON.parse() 成功!\nmessage: "${parsed.message}"\nuser: "${parsed.user}"`
+          };
+        } catch (e) {
+          return { type: 'error', msg: `JSON.parse() エラー: ${e.message}` };
+        }
+      },
+      points: [
+        '<code>json.dumps(dict)</code> で辞書が JSON 文字列 <code>\'{"message": "Hello...", "user": "Shun"}\'</code> になる',
+        'body は必ず文字列でなければならないので、辞書をそのまま入れるとエラー',
+        'クライアントで <code>JSON.parse(body)</code> すると <code>{ message: "...", user: "..." }</code> が取れる',
+        'これが API Gateway + Lambda プロキシ統合の正しいパターン'
+      ]
+    }
+  ];
+
+  let current = 0;
+
+  function setScenario(idx) {
+    current = idx;
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === idx);
+    });
+
+    const s = scenarios[idx];
+    document.getElementById('scenario-desc').innerHTML = s.desc;
+    document.getElementById('code-display').innerHTML = s.code;
+
+    document.getElementById('resp-full').textContent = '← Lambda を実行してください';
+    document.getElementById('resp-full').className = 'response-value empty';
+    document.getElementById('resp-status').textContent = '';
+    document.getElementById('resp-body').textContent = '';
+    document.getElementById('body-type').textContent = '';
+    document.getElementById('parse-result').innerHTML = '';
+
+    const ul = document.getElementById('explanation-list');
+    ul.innerHTML = s.points.map(p => `<li>${p}</li>`).join('');
+  }
+
+  function invokeLambda() {
+    const s = scenarios[current];
+    const response = s.invoke();
+
+    const fullEl = document.getElementById('resp-full');
+    fullEl.textContent = JSON.stringify(response, null, 2);
+    fullEl.className = 'response-value';
+    fullEl.style.whiteSpace = 'pre';
+
+    document.getElementById('resp-status').innerHTML =
+      `<span class="status-200">${response.statusCode} OK</span>`;
+
+    const bodyEl = document.getElementById('resp-body');
+    bodyEl.textContent = response.body;
+
+    const bodyType = document.getElementById('body-type');
+    bodyType.textContent = 'typeof: string';
+
+    const parseResult = s.parseDemo(response.body);
+    const pr = document.getElementById('parse-result');
+
+    const cls = parseResult.type === 'ok' ? 'parse-success' :
+                parseResult.type === 'warn' ? 'parse-warn' : 'parse-error';
+    const tagCls = parseResult.type === 'ok' ? 'tag-ok' :
+                   parseResult.type === 'warn' ? 'tag-warn' : 'tag-err';
+    const tagLabel = parseResult.type === 'ok' ? '✓ 成功' :
+                     parseResult.type === 'warn' ? '⚠ 注意' : '✗ エラー';
+
+    pr.innerHTML = `
+      <div class="response-label">
+        クライアント側: JSON.parse(body) の結果
+        <span class="tag ${tagCls}">${tagLabel}</span>
+      </div>
+      <div class="${cls}" style="white-space:pre-line">${parseResult.msg}</div>
+    `;
+  }
+
+  setScenario(0);
+</script>
+</body>
+</html>
