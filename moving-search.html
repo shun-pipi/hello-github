@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>葛西→浦安 引っ越し業者検索</title>
+    <style>
+      body {
+        font-family: "游ゴシック", YuGothic, "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
+        background-color: #f5f7fa;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      header {
+        background: linear-gradient(135deg, #00ced1, #007b9e);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+      header h1 {
+        margin: 0 0 8px 0;
+        font-size: 1.8em;
+      }
+      header p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.95em;
+      }
+      .route-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.5);
+        border-radius: 20px;
+        padding: 6px 16px;
+        margin-top: 12px;
+        font-size: 1.1em;
+        font-weight: bold;
+      }
+      .filter-section {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      }
+      .filter-section h2 {
+        margin: 0 0 14px 0;
+        font-size: 1em;
+        color: #555;
+      }
+      .filter-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .filter-row label {
+        font-size: 0.9em;
+        color: #444;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .filter-row select {
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.9em;
+      }
+      .company-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        border-left: 4px solid #00ced1;
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+      }
+      .company-card.budget {
+        border-left-color: #4caf50;
+      }
+      .company-card.mid {
+        border-left-color: #ff9800;
+      }
+      .company-info {
+        flex: 1;
+      }
+      .company-name {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #222;
+        margin: 0 0 6px 0;
+      }
+      .company-tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .tag {
+        font-size: 0.75em;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: bold;
+      }
+      .tag-budget { background: #e8f5e9; color: #2e7d32; }
+      .tag-track { background: #e3f2fd; color: #1565c0; }
+      .tag-size { background: #fff3e0; color: #e65100; }
+      .tag-feature { background: #f3e5f5; color: #6a1b9a; }
+      .company-desc {
+        font-size: 0.88em;
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+      .price-range {
+        font-size: 1em;
+        color: #00ced1;
+        font-weight: bold;
+      }
+      .price-note {
+        font-size: 0.78em;
+        color: #888;
+        margin-left: 6px;
+        font-weight: normal;
+      }
+      .stars {
+        color: #f4b400;
+        font-size: 1em;
+      }
+      .review-count {
+        font-size: 0.8em;
+        color: #888;
+        margin-left: 4px;
+      }
+      .company-meta {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 8px;
+      }
+      .info-note {
+        background: #fff8e1;
+        border: 1px solid #ffe082;
+        border-radius: 8px;
+        padding: 14px 18px;
+        font-size: 0.85em;
+        color: #5d4037;
+        margin-bottom: 20px;
+      }
+      .info-note strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .section-title {
+        font-size: 1em;
+        font-weight: bold;
+        color: #444;
+        margin: 0 0 14px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>引っ越し業者を探す</h1>
+        <p>格安かつ実績のある業者をまとめました</p>
+        <div class="route-badge">葛西 → 浦安（約5〜8km）</div>
+      </header>
+
+      <div class="info-note">
+        <strong>葛西〜浦安の引っ越しについて</strong>
+        距離が短く（約5〜8km）、単身〜2LDK程度なら2〜4万円台が相場です。
+        一括見積もりサービスを使うと複数業者を比較でき、値引き交渉もしやすくなります。
+        繁忙期（3〜4月）は早めの予約が必須です。
+      </div>
+
+      <div class="filter-section">
+        <h2>絞り込み</h2>
+        <div class="filter-row">
+          <label>
+            荷物量：
+            <select id="filter-size" onchange="filterCards()">
+              <option value="all">すべて</option>
+              <option value="single">単身</option>
+              <option value="family">家族・2人以上</option>
+            </select>
+          </label>
+          <label>
+            重視するポイント：
+            <select id="filter-feature" onchange="filterCards()">
+              <option value="all">すべて</option>
+              <option value="budget">とにかく安さ重視</option>
+              <option value="track">実績・信頼重視</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-title">おすすめ業者 6選</div>
+
+      <div class="company-card budget" data-size="single family" data-feature="budget track">
+        <div class="company-info">
+          <div class="company-name">アート引越センター</div>
+          <div class="company-tags">
+            <span class="tag tag-track">業界最大手</span>
+            <span class="tag tag-size">単身〜家族</span>
+            <span class="tag tag-feature">梱包資材無料貸出</span>
+          </div>
+          <div class="company-desc">
+            全国実績No.1クラスの老舗大手。「たのめーる」パックなど単身向け格安プランあり。
+            近距離引越し（葛西〜浦安）も対応可。保険・補償が手厚く、初めての引越しにも安心。
+          </div>
+          <div class="price-range">単身：25,000円〜<span class="price-note">（時期・荷物量により変動）</span></div>
+          <div class="company-meta">
+            <span class="stars">★★★★☆</span>
+            <span class="review-count">口コミ多数・実績◎</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="company-card budget" data-size="single" data-feature="budget">
+        <div class="company-info">
+          <div class="company-name">赤帽（関東支部）</div>
+          <div class="company-tags">
+            <span class="tag tag-budget">格安</span>
+            <span class="tag tag-size">単身・小荷物向け</span>
+            <span class="tag tag-feature">個人事業主が直接対応</span>
+          </div>
+          <div class="company-desc">
+            軽トラック1台で対応する個人事業主系サービス。単身の小口引越しに非常に安く、
+            葛西〜浦安のような近距離なら1万円台から対応可能なケースも。
+            荷物が少ない方・予算最優先の方に最適。
+          </div>
+          <div class="price-range">単身小口：15,000円〜<span class="price-note">（要見積もり）</span></div>
+          <div class="company-meta">
+            <span class="stars">★★★★☆</span>
+            <span class="review-count">低価格・融通◎</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="company-card mid" data-size="single family" data-feature="budget track">
+        <div class="company-info">
+          <div class="company-name">サカイ引越センター</div>
+          <div class="company-tags">
+            <span class="tag tag-track">大手・実績豊富</span>
+            <span class="tag tag-size">単身〜家族</span>
+            <span class="tag tag-feature">女性スタッフ指名可</span>
+          </div>
+          <div class="company-desc">
+            関東エリアでの実績が豊富な大手。「ハーフ引越」など近距離向けの格安プランあり。
+            スタッフの対応が丁寧との口コミが多く、コストパフォーマンスのバランスが良い。
+          </div>
+          <div class="price-range">単身：28,000円〜<span class="price-note">（プランにより異なる）</span></div>
+          <div class="company-meta">
+            <span class="stars">★★★★☆</span>
+            <span class="review-count">丁寧さ・対応◎</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="company-card budget" data-size="single family" data-feature="budget">
+        <div class="company-info">
+          <div class="company-name">引越し侍（一括見積もり）</div>
+          <div class="company-tags">
+            <span class="tag tag-budget">最安値比較向き</span>
+            <span class="tag tag-size">単身〜家族</span>
+            <span class="tag tag-feature">複数社を一括比較</span>
+          </div>
+          <div class="company-desc">
+            業者直接ではなく比較サイト。複数業者から同時に見積もりを取れるため、
+            競争原理でさらに安くなることが多い。葛西〜浦安のような近距離では
+            業者間の価格差が大きく出やすく、一括比較が特に有効。
+          </div>
+          <div class="price-range">最安値を自動比較<span class="price-note">（無料・営業電話注意）</span></div>
+          <div class="company-meta">
+            <span class="stars">★★★★★</span>
+            <span class="review-count">節約効果◎</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="company-card mid" data-size="family" data-feature="track">
+        <div class="company-info">
+          <div class="company-name">日通（日本通運）</div>
+          <div class="company-tags">
+            <span class="tag tag-track">老舗大手</span>
+            <span class="tag tag-size">2人以上・家族向け</span>
+            <span class="tag tag-feature">美術品・精密機器対応</span>
+          </div>
+          <div class="company-desc">
+            業界最古参の大手。信頼性・補償内容が業界トップクラス。
+            単身向けには割高になる傾向があるが、家族引越しや荷物が多い場合は
+            安定した品質で対応。
+          </div>
+          <div class="price-range">2LDK：45,000円〜<span class="price-note">（荷物量・時期による）</span></div>
+          <div class="company-meta">
+            <span class="stars">★★★★☆</span>
+            <span class="review-count">信頼・補償◎</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="company-card budget" data-size="single" data-feature="budget">
+        <div class="company-info">
+          <div class="company-name">ハート引越センター</div>
+          <div class="company-tags">
+            <span class="tag tag-budget">格安志向</span>
+            <span class="tag tag-size">単身・カップル向け</span>
+            <span class="tag tag-feature">深夜・早朝割引あり</span>
+          </div>
+          <div class="company-desc">
+            中堅規模の引越し業者で、首都圏の近距離引越しに強み。
+            フレックスプランや時間指定なしプランで大幅割引になることがある。
+            葛西〜浦安の近距離なら柔軟に対応してもらえるケースが多い。
+          </div>
+          <div class="price-range">単身：20,000円〜<span class="price-note">（時間指定なしで割安に）</span></div>
+          <div class="company-meta">
+            <span class="stars">★★★☆☆</span>
+            <span class="review-count">価格◎・実績そこそこ</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-note" style="margin-top:10px;">
+        <strong>費用を安くするコツ</strong>
+        ①繁忙期（3〜4月）を避け、平日・午後便を選ぶ ②不用品を事前に処分して荷物を減らす
+        ③複数社から見積もりを取り値引き交渉する ④段ボールを自分で準備する
+      </div>
+    </div>
+
+    <script>
+      function filterCards() {
+        const sizeFilter = document.getElementById('filter-size').value;
+        const featureFilter = document.getElementById('filter-feature').value;
+        document.querySelectorAll('.company-card').forEach(card => {
+          const sizeMatch = sizeFilter === 'all' || card.dataset.size.includes(sizeFilter);
+          const featureMatch = featureFilter === 'all' || card.dataset.feature.includes(featureFilter);
+          card.style.display = (sizeMatch && featureMatch) ? 'flex' : 'none';
+        });
+      }
+    </script>
+  </body>
+</html>
